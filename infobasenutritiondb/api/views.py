@@ -29,19 +29,21 @@ class AgeGroupViewset(viewsets.ModelViewSet):
 class IntakeDistributionCoordinatesViewSet(viewsets.ModelViewSet):
     serializer_class = IntakeDistributionCoordinatesSerializer
 
-    # pagination_class = None
+    pagination_class = None
 
     def get_queryset(self):
         """
         Supports URL parameter filtering e.g. ?nutrient=Vitamin%20C&sex=male
         """
         queryset = IntakeDistributionCoordinates.objects.all().order_by('nutrient')
+        queryset = queryset.prefetch_related('age_group')
         sex = self.request.query_params.get('sex', None)
         nutrient = self.request.query_params.get('nutrient', None)
         age_group_value = self.request.query_params.get('age_group_value', None)
 
+        sex = sex.capitalize()
         if sex is not None:
-            queryset = queryset.filter(sex__icontains=sex)
+            queryset = queryset.filter(sex=sex)
         if nutrient is not None:
             queryset = queryset.filter(nutrient__icontains=nutrient)
         if age_group_value is not None:
