@@ -5,8 +5,9 @@ from infobasenutritiondb.api import views
 router = routers.DefaultRouter()
 # router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
-router.register(r'nutrient_distribution', views.IntakeDistributionCoordinatesViewSet)
-router.register(r'adequacy_reference', views.AdequacyValueReferenceViewSet)
+router.register(r'nutrient_distribution', views.IntakeDistributionCoordinatesViewSet, basename='nutrient_distribution')
+router.register(r'adequacy_reference', views.AdequacyValueReferenceViewSet, basename='adequacy_reference')
+router.register(r'age_group', views.AgeGroupViewset, basename='age_group')
 
 app_name = "api"
 # Wire up our API using automatic URL routing.

@@ -3,6 +3,7 @@ import django
 import pandas as pd
 import numpy as np
 from pathlib import Path
+from math import isnan
 
 # Need to do this in order to access the flaim database models
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
@@ -84,7 +85,7 @@ age_group_choices = [
 
 
 def populate_reference_tables():
-    # Populating the reference values in the DB
+    # Populating the reference values in the DB from the constants defined globally in this script
 
     for n in nutrients:
         if '(' in n:
@@ -114,6 +115,7 @@ def populate_reference_tables():
 
 
 def populate_adequacy_value_reference_table():
+    """ Takes data from source_data csv and dumps to DB """
     source_data = Path(
         "/home/forest/PycharmProjects/CCHSNutritionViz/DistributionData2019Raw/DistributionReferenceValues-EN.csv")
     df = pd.read_csv(source_data)
@@ -148,10 +150,12 @@ def populate_adequacy_value_reference_table():
 
 
 def populate_distribution_table():
+    """ Takes data from the source_data csv and dumps to DB"""
     source_data = Path(
         "/home/forest/PycharmProjects/CCHSNutritionViz/static/data/distributions-en-all.csv")
     df = pd.read_csv(source_data)
     df = df.replace(r'^\s*$', np.nan, regex=True)
+    print(len(df))
 
     for i, row in df.iterrows():
         nutrient = row['Nutrient/Item (unit)']
@@ -168,7 +172,7 @@ def populate_distribution_table():
 
         adequacy_reference_object = AdequacyValueReference.objects.get(nutrient=nutrient, age_group=age_group,
                                                                        region=region, sex=sex)
-        o, c = IntakeDistributionCoordinates.objects.get_or_create(
+        o = IntakeDistributionCoordinates.objects.create(
             nutrient=nutrient,
             year=year,
             region=region,
@@ -180,7 +184,40 @@ def populate_distribution_table():
         )
 
 
+def clean_nan_values_from_adequacy_reference():
+    """
+    Reading the values from the spreadsheet into the DB results in some weird parsing of empty cells...
+    need to reset these to None manually
+    """
+    reference_values = AdequacyValueReference.objects.all()
+
+    for x in reference_values:
+        if x.adequacy_type == "nan":
+            x.adequacy_type = None
+            x.save()
+
+        if x.excess_type == "nan":
+            x.excess_type = None
+            x.save()
+
+        if isnan(x.adequacy_value):
+            x.adequacy_value = None
+            x.save()
+
+        if isnan(x.excess_value):
+            x.excess_value = None
+            x.save()
+
+
 if __name__ == "__main__":
     # populate_reference_tables()
     # populate_adequacy_value_reference_table()
-    populate_distribution_table()
+    # populate_distribution_table()
+
+    # o = IntakeDistributionCoordinates.objects.all()
+    # for x in tqdm(o):
+    #     x.delete()
+
+    # clean_nan_values_from_adequacy_reference()
+
+    pass

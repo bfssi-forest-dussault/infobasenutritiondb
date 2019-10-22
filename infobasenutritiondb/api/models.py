@@ -147,3 +147,7 @@ class IntakeDistributionCoordinates(models.Model):
     y = models.FloatField()
 
     adequacy_reference_object = models.ForeignKey(AdequacyValueReference, on_delete=models.CASCADE)
+
+    @property
+    def age_group_value(self):
+        return self.age_group.age_group
