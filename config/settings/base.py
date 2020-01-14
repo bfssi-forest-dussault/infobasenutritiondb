@@ -78,7 +78,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "infobasenutritiondb.users.apps.UsersConfig",
     # Your stuff: custom apps go here
-    'infobasenutritiondb.api'
+    "infobasenutritiondb.api"
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -271,6 +271,10 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 20
 }
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ORIGIN_WHITELIST = [
-    "http://127.0.0.1:5000"  # Flask server
+    "http://127.0.0.1:5000",  # Flask server
+    "http://localhost:5000",  # Flask server
 ]
