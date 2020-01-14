@@ -16,19 +16,15 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class AgeGroupSerializer(serializers.ModelSerializer):
-    age_group_value = serializers.Field()
-
     class Meta:
         model = models.AgeGroup
-        fields = ["age_group_value"]
+        fields = '__all__'
 
 
 class IntakeDistributionCoordinatesSerializer(serializers.HyperlinkedModelSerializer):
     age_group_value = serializers.ReadOnlyField()
-
     class Meta:
         model = models.IntakeDistributionCoordinates
-        # fields = "__all__"
         fields = ['nutrient', 'year', 'sex', 'age_group_value', 'x', 'y']
 
 
